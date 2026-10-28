@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-// Palette taken from rivierahighschool.org (live site): deep blue sections,
+// School palette: deep blue sections,
 // yellow accents, blue headings/links, red hero button, dark grey text.
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],

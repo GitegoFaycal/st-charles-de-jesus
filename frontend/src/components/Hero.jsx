@@ -14,7 +14,7 @@ function useWideScreen() {
   return wide
 }
 
-/** Full-bleed campus photo/video with a thin serif headline, as on the reference site. */
+/** Full-bleed campus photo/video with a thin serif headline. */
 export default function Hero({ home }) {
   const line3 = home.heroLine3 || home.heroTypedWords?.[0] || ''
   const wide = useWideScreen()

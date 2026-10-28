@@ -3,7 +3,7 @@ import api, { errorMessage } from '../lib/api'
 
 const CATEGORIES = ['Bullying', 'Harassment', 'Mental Health', 'Neglect', 'Fraud', 'Other']
 
-/** "Report a concern" strip that sits at the top of the footer, as on the reference site. */
+/** "Report a concern" strip that sits at the top of the footer on every page. */
 export default function ReportConcern() {
   const [form, setForm] = useState({ email: '', category: '', details: '' })
   const [status, setStatus] = useState({ state: 'idle' })

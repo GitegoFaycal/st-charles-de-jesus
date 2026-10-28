@@ -18,7 +18,7 @@
   .container-x {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
-  /* Buttons follow the reference: square-ish corners, yellow with white text */
+  /* Buttons: square-ish corners, yellow with white text */
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-[3px] px-5 py-2.5 text-[15px] font-medium transition-all duration-200;
   }
@@ -38,7 +38,7 @@
     @apply btn bg-danger px-10 py-4 font-display text-xl uppercase tracking-[0.12em] text-white hover:bg-brand-700;
     text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   }
-  /* Plain uppercase text link ("LEARN MORE") used throughout the reference */
+  /* Plain uppercase text link ("LEARN MORE") used throughout the site */
   .link-more {
     @apply inline-flex items-center gap-1 font-display text-base font-bold uppercase tracking-[0.12em] text-ink-light transition hover:text-accent-dark;
   }
@@ -63,7 +63,7 @@
   .card {
     @apply rounded-[5px] bg-white shadow-card;
   }
-  /* Footer form fields (light blue on deep blue, as on the reference) */
+  /* Footer form fields (light blue on deep blue) */
   .input-footer {
     @apply w-full rounded-none border-0 bg-field px-4 py-2.5 text-[15px] text-white outline-none placeholder:text-white/80 focus:ring-2 focus:ring-accent;
   }

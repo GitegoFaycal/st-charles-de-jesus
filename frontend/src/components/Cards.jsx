@@ -20,7 +20,7 @@ export const QUICK_ICONS = {
 }
 const DEFAULT_ICONS = ['book', 'admissions', 'school', 'calendar']
 
-/** Line icon + uppercase label, like the four tiles under the reference intro. */
+/** Line icon + uppercase label: the four quick-link tiles under the home intro. */
 export function QuickLinkCard({ title, icon, link, index = 0 }) {
   const Icon = QUICK_ICONS[icon] || QUICK_ICONS[DEFAULT_ICONS[index % DEFAULT_ICONS.length]]
   return (
@@ -66,7 +66,7 @@ export function ProgramCard({ program }) {
   )
 }
 
-/** Light grey card with blue title and a dated excerpt, like the reference news grid. */
+/** Light grey card with blue title and a dated excerpt, used in the news grid. */
 export function NewsCard({ post }) {
   return (
     <Link to={`/news/${post.slug}`} className="group flex h-full flex-col overflow-hidden rounded-[5px] bg-[#f8f8f8] shadow-sm transition hover:shadow-card">

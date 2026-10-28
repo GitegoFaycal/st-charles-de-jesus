@@ -1,7 +1,7 @@
 # Saint Charles de Jesus TSS — School Website
 
 Website for **Saint Charles de Jesus TSS**, a private Catholic technical secondary school in Kagarama, Kicukiro District, Kigali City.
-The layout and colours follow [rivierahighschool.org](https://rivierahighschool.org/); every word, photo and figure is editable from a built-in admin dashboard.
+Every word, photo and figure on the site is editable from a built-in admin dashboard.
 
 | Part | Stack |
 | --- | --- |
@@ -76,7 +76,7 @@ backend/uploads Media files (committed: logo, photos, hero video)
 
 ## Design
 
-Palette taken from the live rivierahighschool.org: deep blue `#064187` sections and footer, yellow `#FFC53A` buttons and dividers,
+School palette: deep blue `#064187` sections and footer, yellow `#FFC53A` buttons and dividers,
 blue headings `#3E6FA8` / links `#4981C2`, red hero button `#FF0606`, yellow news band `#FFBD33`. Fonts: Inter (body), Work Sans (headings),
 Cormorant Garamond (thin serif hero and logo text), Poppins (footer). Colours live in `frontend/tailwind.config.js`; shared button and
 form styles in `frontend/src/index.css`.
