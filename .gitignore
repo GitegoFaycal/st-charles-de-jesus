@@ -9,3 +9,4 @@ backend/data/*.backup.json
 backend/data/db.remote.json
 .vercel
 .env*.local
+.env.*
