@@ -95,9 +95,14 @@ async function blobHandle(req, res) {
   const { handleUpload, handleUploadPresigned } = require('@vercel/blob/client');
   const { issueSignedToken } = require('@vercel/blob');
   const constraints = { allowedContentTypes: Object.keys(ALLOWED), maximumSizeInBytes: MAX_BYTES };
+  const eventType = (req.body && req.body.type) || '';
+  // An admin page loaded before a deploy may still use the classic client-token flow.
+  if (eventType === 'blob.generate-client-token' && !blobToken()) {
+    return res.status(400).json({ message: 'The admin page is out of date. Please reload it (Ctrl+F5) and try again.' });
+  }
   try {
     let json;
-    if (blobFlow() === 'presigned') {
+    if (blobFlow() === 'presigned' && eventType !== 'blob.generate-client-token') {
       json = await handleUploadPresigned({
         body: req.body,
         request: req,
