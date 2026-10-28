@@ -63,8 +63,8 @@ export const SECTIONS = {
       ] },
       list('stats', 'Stats', [text('value', 'Value'), text('label', 'Label')], 'Stat'),
       { key: 'programs', label: 'Programmes section', type: 'group', fields: [text('programsHeading', 'Heading'), area('programsIntro', 'Intro text')] },
-      { key: 'headTeacher', label: 'Head teacher quote', type: 'group', fields: [
-        text('headTeacherName', 'Name'), text('headTeacherTitle', 'Title'), img('headTeacherPhoto', 'Photo'), area('headTeacherQuote', 'Quote'),
+      { key: 'headTeacher', label: "Head teacher quote (name, title and photo are taken from the Head teacher's message page)", type: 'group', fields: [
+        area('headTeacherQuote', 'Quote'),
       ] },
       list('partners', 'Affiliations / partner logos (shown under the news)', [text('name', 'Name'), img('logo', 'Logo (optional)'), text('link', 'Website (optional)')], 'Partner'),
       { key: 'headings', label: 'Other headings', type: 'group', fields: [

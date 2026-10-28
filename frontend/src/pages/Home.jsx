@@ -52,6 +52,14 @@ export default function Home() {
   const l1 = programs.filter((p) => p.category !== 'TSS')
   const news = sortByDateDesc(content.news).slice(0, 3)
   const partners = home.partners || []
+  // The head teacher's name, title and photo come from the "Head teacher's message" page,
+  // so they only need to be edited once.
+  const ht = content.headTeacherMessage || {}
+  const headTeacher = {
+    name: ht.name || home.headTeacherName,
+    title: ht.title || home.headTeacherTitle,
+    photo: ht.photo || home.headTeacherPhoto,
+  }
 
   return (
     <>
@@ -117,14 +125,14 @@ export default function Home() {
         <div className="container-x relative grid items-center gap-12 lg:grid-cols-[minmax(0,440px)_1fr] lg:gap-16">
           <div className="relative mx-auto">
             <div className="pointer-events-none absolute -left-10 -top-10 h-64 w-64 bg-dots-dark opacity-70 [background-size:18px_18px]" />
-            <Avatar src={home.headTeacherPhoto} name={home.headTeacherName} className="relative h-72 w-72 md:h-[380px] md:w-[380px]" textClass="text-6xl" />
+            <Avatar src={headTeacher.photo} name={headTeacher.name} className="relative h-72 w-72 md:h-[380px] md:w-[380px]" textClass="text-6xl" />
           </div>
           <div>
             <BigQuote className="h-20 w-20 text-quote md:h-28 md:w-28" />
             <p className="mt-6 text-[22px] leading-[1.55] text-ink underline decoration-quote decoration-1 underline-offset-[7px] md:text-[31px]">{home.headTeacherQuote}</p>
             <div className="mt-8 text-[16px] text-ink">
-              <div className="font-semibold">{home.headTeacherName},</div>
-              <div>{home.headTeacherTitle}</div>
+              <div className="font-semibold">{headTeacher.name},</div>
+              <div>{headTeacher.title}</div>
             </div>
             <Link to="/about/head-teacher-message" className="link-more mt-5">Read the full message</Link>
           </div>

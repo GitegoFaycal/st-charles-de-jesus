@@ -93,9 +93,7 @@ module.exports = {
     programsHeading: 'Our Programmes',
     programsIntro:
       'Technical Secondary School (TSS) programmes run from Level 3 to Level 5 over three years. Level 1 short courses give fast, practical entry into a trade.',
-    headTeacherName: 'The Head Teacher',
-    headTeacherTitle: 'Head Teacher, Saint Charles de Jesus TSS',
-    headTeacherPhoto: '/uploads/head-teacher.jpg',
+    // Name, title and photo are shown from headTeacherMessage below.
     headTeacherQuote:
       'At Saint Charles de Jesus we believe that every young person carries a gift. Our task is to give that gift the skills, the discipline and the faith it needs to serve Rwanda and the world. We provide a safe, nurturing and inclusive environment where learners grow in knowledge, in creativity and in character.',
     newsHeading: 'Happening at Saint Charles de Jesus',
