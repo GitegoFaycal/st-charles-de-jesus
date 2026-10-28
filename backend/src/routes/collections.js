@@ -23,7 +23,7 @@ function ensureUniqueSlug(list, base, ignoreId) {
 
 router.param('name', (req, res, next, name) => {
   if (!COLLECTIONS.includes(name)) return res.status(404).json({ message: 'Unknown collection' });
-  const data = db.get();
+  const data = req.db;
   if (!Array.isArray(data[name])) data[name] = [];
   req.collection = data[name];
   req.collectionName = name;
@@ -38,7 +38,7 @@ router.get('/:name/:id', (req, res) => {
   res.json(item);
 });
 
-router.post('/:name', requireAuth, (req, res) => {
+router.post('/:name', requireAuth, async (req, res) => {
   const body = req.body || {};
   const item = {
     ...body,
@@ -51,11 +51,11 @@ router.post('/:name', requireAuth, (req, res) => {
   }
   if (item.order === undefined) item.order = req.collection.length;
   req.collection.push(item);
-  db.save();
+  await db.save(req.db);
   res.status(201).json(item);
 });
 
-router.put('/:name/:id', requireAuth, (req, res) => {
+router.put('/:name/:id', requireAuth, async (req, res) => {
   const idx = req.collection.findIndex((i) => i.id === req.params.id);
   if (idx === -1) return res.status(404).json({ message: 'Not found' });
   const body = req.body || {};
@@ -64,11 +64,11 @@ router.put('/:name/:id', requireAuth, (req, res) => {
     merged.slug = ensureUniqueSlug(req.collection, slugify(body.slug || merged.slug || merged.title || merged.name), merged.id);
   }
   req.collection[idx] = merged;
-  db.save();
+  await db.save(req.db);
   res.json(merged);
 });
 
-router.put('/:name', requireAuth, (req, res) => {
+router.put('/:name', requireAuth, async (req, res) => {
   // Reorder: body = [ids in new order]
   const ids = Array.isArray(req.body) ? req.body : [];
   ids.forEach((id, order) => {
@@ -76,15 +76,15 @@ router.put('/:name', requireAuth, (req, res) => {
     if (item) item.order = order;
   });
   req.collection.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  db.save();
+  await db.save(req.db);
   res.json(req.collection);
 });
 
-router.delete('/:name/:id', requireAuth, (req, res) => {
+router.delete('/:name/:id', requireAuth, async (req, res) => {
   const idx = req.collection.findIndex((i) => i.id === req.params.id);
   if (idx === -1) return res.status(404).json({ message: 'Not found' });
   req.collection.splice(idx, 1);
-  db.save();
+  await db.save(req.db);
   res.json({ ok: true });
 });
 

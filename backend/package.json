@@ -2,19 +2,12 @@
   "name": "st-charles-de-jesus-backend",
   "version": "1.0.0",
   "private": true,
-  "description": "Node/Express API and admin backend for the Saint Charles de Jesus TSS website.",
+  "description": "Node/Express API and admin backend for the Saint Charles de Jesus TSS website (runtime dependencies live in the root package.json).",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
-  },
-  "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "cors": "^2.8.5",
-    "dotenv": "^17.3.1",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
-    "multer": "^2.1.1"
+    "start": "node src/index.js",
+    "db:push": "node scripts/push-db.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

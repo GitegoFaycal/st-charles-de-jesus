@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { Upload, Trash2, ChevronUp, ChevronDown, Plus, Link as LinkIcon, FileText, MapPin } from 'lucide-react'
-import api, { errorMessage, mediaUrl } from '../lib/api'
+import { errorMessage, mediaUrl } from '../lib/api'
+import { uploadFile } from '../lib/uploads'
 
 export function MediaInput({ value, onChange, accept = 'image/*', isImage = true }) {
   const ref = useRef()
@@ -11,9 +12,7 @@ export function MediaInput({ value, onChange, accept = 'image/*', isImage = true
     setBusy(true)
     setErr('')
     try {
-      const fd = new FormData()
-      fd.append('file', file)
-      const { data } = await api.post('/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      const data = await uploadFile(file)
       onChange(data.url)
     } catch (e) {
       setErr(errorMessage(e))

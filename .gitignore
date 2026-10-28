@@ -4,3 +4,8 @@ dist/
 backend/data/db.json
 *.log
 .DS_Store
+backend/uploads/
+backend/data/*.backup.json
+backend/data/db.remote.json
+.vercel
+.env*.local

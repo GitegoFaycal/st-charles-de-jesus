@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Upload, Trash2, Copy, FileText, Check } from 'lucide-react'
 import api, { errorMessage, mediaUrl } from '../lib/api'
+import { uploadFile } from '../lib/uploads'
 import { Loader } from '../components/ui'
 
 const isImage = (n) => /\.(jpe?g|png|webp|gif|svg)$/i.test(n)
@@ -22,9 +23,7 @@ export default function Media() {
     setErr('')
     try {
       for (const f of fileList) {
-        const fd = new FormData()
-        fd.append('file', f)
-        await api.post('/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+        await uploadFile(f)
       }
       await load()
     } catch (e) {
@@ -35,7 +34,7 @@ export default function Media() {
   }
   const remove = async (f) => {
     if (!window.confirm(`Delete ${f.name}? Pages still using it will show a broken image.`)) return
-    await api.delete(`/upload/${encodeURIComponent(f.name)}`)
+    await api.delete('/upload', { params: { url: f.url } })
     await load()
   }
   const copy = (url) => {
@@ -56,7 +55,7 @@ export default function Media() {
       <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {files.length === 0 && <p className="col-span-full text-sm text-gray-500">No files uploaded yet.</p>}
         {files.map((f) => (
-          <div key={f.name} className="card overflow-hidden">
+          <div key={f.url} className="card overflow-hidden">
             {isImage(f.name) ? <img src={mediaUrl(f.url)} alt="" className="aspect-square w-full object-cover" loading="lazy" /> : <a href={mediaUrl(f.url)} target="_blank" rel="noreferrer" className="flex aspect-square items-center justify-center bg-gray-50 text-brand-700"><FileText size={40} /></a>}
             <div className="p-3">
               <div className="truncate text-xs font-semibold" title={f.name}>{f.name}</div>
