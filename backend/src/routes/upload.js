@@ -25,7 +25,14 @@ const ALLOWED = {
 };
 const BLOB_HOST_SUFFIX = '.public.blob.vercel-storage.com';
 
-const blobMode = () => !!process.env.BLOB_READ_WRITE_TOKEN;
+// Vercel names the variable BLOB_READ_WRITE_TOKEN, or <PREFIX>_BLOB_READ_WRITE_TOKEN
+// when a custom prefix was chosen while connecting the store; accept both.
+function blobToken() {
+  if (process.env.BLOB_READ_WRITE_TOKEN) return process.env.BLOB_READ_WRITE_TOKEN;
+  const key = Object.keys(process.env).find((k) => k.endsWith('BLOB_READ_WRITE_TOKEN') && process.env[k]);
+  return key ? process.env[key] : null;
+}
+const blobMode = () => !!blobToken();
 
 function slugName(originalname, mimetype) {
   const base =
@@ -73,6 +80,7 @@ async function blobHandle(req, res) {
     const json = await handleUpload({
       body: req.body,
       request: req,
+      token: blobToken(),
       onBeforeGenerateToken: async (pathname, clientPayload) => {
         let token = null;
         try {
@@ -102,7 +110,7 @@ async function listBlob() {
   const out = [];
   let cursor;
   do {
-    const page = await list({ prefix: 'uploads/', limit: 1000, cursor });
+    const page = await list({ prefix: 'uploads/', limit: 1000, cursor, token: blobToken() });
     for (const b of page.blobs) {
       out.push({ name: b.pathname.replace(/^uploads\//, ''), url: b.url, size: b.size, modified: b.uploadedAt });
     }
@@ -143,7 +151,7 @@ router.delete('/', requireAuth, async (req, res) => {
     }
     if (!host.endsWith(BLOB_HOST_SUFFIX)) return res.status(400).json({ message: 'Not a media file of this site' });
     const { del } = require('@vercel/blob');
-    await del(url);
+    await del(url, { token: blobToken() });
     return res.json({ ok: true });
   }
   const name = path.basename(new URL(url, 'http://local').pathname);

@@ -53,7 +53,15 @@ const submitLimiter = rateLimit({
   message: { message: 'Too many submissions from this network. Please try again later.' },
 });
 
-app.get('/api/health', (req, res) => res.json({ ok: true, storage: db.mode(), time: new Date().toISOString() }));
+app.get('/api/health', (req, res) =>
+  res.json({
+    ok: true,
+    storage: db.mode(),
+    // Names (never values) of the storage variables the function can see; helps diagnose setup.
+    storageVars: Object.keys(process.env).filter((k) => /BLOB|UPSTASH|KV_REST/.test(k)).sort(),
+    time: new Date().toISOString(),
+  })
+);
 app.post('/api/auth/login', loginLimiter);
 app.post('/api/submissions/:type', submitLimiter);
 app.use(['/api/auth', '/api/content', '/api/collections', '/api/submissions'], withDb);
