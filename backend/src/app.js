@@ -58,7 +58,7 @@ app.get('/api/health', (req, res) =>
     ok: true,
     storage: db.mode(),
     // Names (never values) of the storage variables the function can see; helps diagnose setup.
-    storageVars: Object.keys(process.env).filter((k) => /BLOB|UPSTASH|KV_REST/.test(k)).sort(),
+    storageVars: Object.keys(process.env).filter((k) => /BLOB|UPSTASH|KV_REST|OIDC/.test(k)).sort(),
     time: new Date().toISOString(),
   })
 );

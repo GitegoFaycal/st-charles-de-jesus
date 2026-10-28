@@ -1,4 +1,4 @@
-import { upload } from '@vercel/blob/client'
+import { upload, uploadPresigned } from '@vercel/blob/client'
 import api, { API_BASE } from './api'
 
 let configPromise = null
@@ -30,14 +30,15 @@ function slug(name) {
 
 /** Upload one file; resolves to { url, name, size }. Works in both modes. */
 export async function uploadFile(file) {
-  const { mode, maxBytes, accept } = await uploadConfig()
+  const { mode, flow, maxBytes, accept } = await uploadConfig()
   if (!accept.includes(file.type)) throw new Error('Only images, PDF and MP4 files are allowed')
   if (file.size > maxBytes) throw new Error(`File is larger than ${Math.round(maxBytes / 1048576)} MB`)
 
   if (mode === 'blob') {
     // The file goes straight from the browser to Vercel Blob; the API only
-    // issues the token after checking the admin session passed in clientPayload.
-    const blob = await upload(`uploads/${slug(file.name)}`, file, {
+    // issues a short-lived token after checking the admin session passed in clientPayload.
+    const send = flow === 'presigned' ? uploadPresigned : upload
+    const blob = await send(`uploads/${slug(file.name)}`, file, {
       access: 'public',
       contentType: file.type,
       handleUploadUrl: `${API_BASE}/api/upload`,

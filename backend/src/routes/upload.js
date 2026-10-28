@@ -1,7 +1,8 @@
 // Media uploads.
-//  - Blob mode (Vercel): files go straight from the browser to Vercel Blob
-//    using a short-lived token issued here (handleUpload). Active when
-//    BLOB_READ_WRITE_TOKEN is set.
+//  - Blob mode (Vercel): files go straight from the browser to Vercel Blob.
+//    The API only issues a short-lived, admin-authenticated upload token.
+//    Active when the Blob store is connected to the project (Vercel injects
+//    BLOB_STORE_ID + an OIDC token, or a BLOB_READ_WRITE_TOKEN).
 //  - Disk mode (local dev / self-hosting): multer writes to
 //    frontend/public/uploads, which Vite and index.js serve at /uploads.
 const express = require('express');
@@ -32,7 +33,13 @@ function blobToken() {
   const key = Object.keys(process.env).find((k) => k.endsWith('BLOB_READ_WRITE_TOKEN') && process.env[k]);
   return key ? process.env[key] : null;
 }
-const blobMode = () => !!blobToken();
+// Stores connected through Vercel's OIDC federation expose BLOB_STORE_ID instead of a token.
+const blobMode = () => !!(blobToken() || process.env.BLOB_STORE_ID);
+// Browser upload flow: "presigned" (works with OIDC or a token) needs the webhook key Vercel
+// injects with the store; otherwise fall back to the classic client-token flow.
+const blobFlow = () => (process.env.BLOB_WEBHOOK_PUBLIC_KEY ? 'presigned' : 'token');
+// SDK auth options: pass the read-write token when we have one, otherwise let the SDK use OIDC.
+const sdkAuth = () => (blobToken() ? { token: blobToken() } : {});
 
 function slugName(originalname, mimetype) {
   const base =
@@ -43,6 +50,16 @@ function slugName(originalname, mimetype) {
       .replace(/(^-|-$)/g, '')
       .slice(0, 40) || 'file';
   return `${base}-${crypto.randomBytes(4).toString('hex')}${ALLOWED[mimetype] || ''}`;
+}
+
+function adminFromClientPayload(clientPayload) {
+  let token = null;
+  try {
+    token = JSON.parse(clientPayload || '{}').token;
+  } catch {
+    token = null;
+  }
+  return verifyToken(token); // throws when missing/invalid
 }
 
 // ---------- disk mode ----------
@@ -75,30 +92,41 @@ function listDisk() {
 
 // ---------- blob mode ----------
 async function blobHandle(req, res) {
-  const { handleUpload } = require('@vercel/blob/client');
+  const { handleUpload, handleUploadPresigned } = require('@vercel/blob/client');
+  const { issueSignedToken } = require('@vercel/blob');
+  const constraints = { allowedContentTypes: Object.keys(ALLOWED), maximumSizeInBytes: MAX_BYTES };
   try {
-    const json = await handleUpload({
-      body: req.body,
-      request: req,
-      token: blobToken(),
-      onBeforeGenerateToken: async (pathname, clientPayload) => {
-        let token = null;
-        try {
-          token = JSON.parse(clientPayload || '{}').token;
-        } catch {
-          token = null;
-        }
-        verifyToken(token); // throws -> 400 below
-        return {
-          allowedContentTypes: Object.keys(ALLOWED),
-          maximumSizeInBytes: MAX_BYTES,
-          addRandomSuffix: true,
-          tokenPayload: JSON.stringify({ pathname }),
-        };
-      },
-      // Nothing to persist here: the editor stores the returned URL itself.
-      onUploadCompleted: async () => {},
-    });
+    let json;
+    if (blobFlow() === 'presigned') {
+      json = await handleUploadPresigned({
+        body: req.body,
+        request: req,
+        getSignedToken: async (pathname, clientPayload) => {
+          adminFromClientPayload(clientPayload);
+          const token = await issueSignedToken({
+            ...sdkAuth(),
+            pathname: '*', // the final name gets a random suffix, so scope by type/size/time instead
+            operations: ['put'],
+            validUntil: Date.now() + 15 * 60 * 1000,
+            ...constraints,
+          });
+          return { token, urlOptions: { ...constraints, addRandomSuffix: true, tokenPayload: JSON.stringify({ pathname }) } };
+        },
+        onUploadCompleted: async () => {},
+      });
+    } else {
+      json = await handleUpload({
+        body: req.body,
+        request: req,
+        ...sdkAuth(),
+        onBeforeGenerateToken: async (pathname, clientPayload) => {
+          adminFromClientPayload(clientPayload);
+          return { ...constraints, addRandomSuffix: true, tokenPayload: JSON.stringify({ pathname }) };
+        },
+        // Nothing to persist here: the editor stores the returned URL itself.
+        onUploadCompleted: async () => {},
+      });
+    }
     res.json(json);
   } catch (err) {
     res.status(400).json({ message: err.message || 'Upload failed' });
@@ -110,7 +138,7 @@ async function listBlob() {
   const out = [];
   let cursor;
   do {
-    const page = await list({ prefix: 'uploads/', limit: 1000, cursor, token: blobToken() });
+    const page = await list({ prefix: 'uploads/', limit: 1000, cursor, ...sdkAuth() });
     for (const b of page.blobs) {
       out.push({ name: b.pathname.replace(/^uploads\//, ''), url: b.url, size: b.size, modified: b.uploadedAt });
     }
@@ -121,7 +149,12 @@ async function listBlob() {
 
 // ---------- routes ----------
 router.get('/config', (req, res) => {
-  res.json({ mode: blobMode() ? 'blob' : 'disk', maxBytes: MAX_BYTES, accept: Object.keys(ALLOWED) });
+  res.json({
+    mode: blobMode() ? 'blob' : 'disk',
+    flow: blobMode() ? blobFlow() : null,
+    maxBytes: MAX_BYTES,
+    accept: Object.keys(ALLOWED),
+  });
 });
 
 router.post('/', (req, res, next) => {
@@ -151,7 +184,7 @@ router.delete('/', requireAuth, async (req, res) => {
     }
     if (!host.endsWith(BLOB_HOST_SUFFIX)) return res.status(400).json({ message: 'Not a media file of this site' });
     const { del } = require('@vercel/blob');
-    await del(url, { token: blobToken() });
+    await del(url, sdkAuth());
     return res.json({ ok: true });
   }
   const name = path.basename(new URL(url, 'http://local').pathname);
