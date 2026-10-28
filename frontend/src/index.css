@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-body text-ink bg-white antialiased;
+  }
+  h1, h2, h3, h4, h5 {
+    @apply font-heading text-ink;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  /* Buttons follow the reference: square-ish corners, yellow with white text */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-[3px] px-5 py-2.5 text-[15px] font-medium transition-all duration-200;
+  }
+  .btn-accent {
+    @apply btn bg-accent text-white hover:bg-brand-700;
+  }
+  .btn-primary {
+    @apply btn bg-brand-700 text-white hover:bg-accent;
+  }
+  .btn-outline {
+    @apply btn border border-brand-700 text-brand-700 hover:bg-brand-700 hover:text-white;
+  }
+  .btn-ghost-white {
+    @apply btn border border-white text-white hover:bg-white hover:text-brand-700;
+  }
+  .btn-red {
+    @apply btn bg-danger px-10 py-4 font-display text-xl uppercase tracking-[0.12em] text-white hover:bg-brand-700;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  /* Plain uppercase text link ("LEARN MORE") used throughout the reference */
+  .link-more {
+    @apply inline-flex items-center gap-1 font-display text-base font-bold uppercase tracking-[0.12em] text-ink-light transition hover:text-accent-dark;
+  }
+  .section {
+    @apply py-16 md:py-24;
+  }
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.2em] text-brand-500;
+  }
+  .h-section {
+    @apply font-heading text-3xl font-bold leading-tight text-ink md:text-4xl lg:text-5xl;
+  }
+  .prose-site p {
+    @apply mb-4 leading-relaxed text-ink-soft;
+  }
+  .input {
+    @apply w-full rounded-[3px] border border-gray-300 bg-[#fafafa] px-4 py-2.5 text-sm text-ink outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-200;
+  }
+  .label {
+    @apply mb-1 block text-sm font-semibold text-ink;
+  }
+  .card {
+    @apply rounded-[5px] bg-white shadow-card;
+  }
+  /* Footer form fields (light blue on deep blue, as on the reference) */
+  .input-footer {
+    @apply w-full rounded-none border-0 bg-field px-4 py-2.5 text-[15px] text-white outline-none placeholder:text-white/80 focus:ring-2 focus:ring-accent;
+  }
+  .footer-heading {
+    @apply font-footer text-base font-semibold uppercase tracking-wide text-white;
+  }
+  .footer-divider {
+    @apply my-4 h-px w-full bg-accent;
+  }
+}
+
+/* Halftone + diagonal stripes for the yellow news band */
+.halftone {
+  background-image:
+    radial-gradient(rgba(0, 0, 0, 0.12) 1.3px, transparent 1.3px),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0 18px, transparent 18px 56px);
+  background-size: 11px 11px, auto;
+}
+
+/* Simple fade-up entrance */
+.fade-up {
+  animation: fadeUp 0.9s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
