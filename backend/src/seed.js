@@ -133,6 +133,7 @@ module.exports = {
       { title: 'Unity', text: 'We are one family of students, staff, parents and alumni.' },
     ],
     patronTitle: 'Our patron: Saint Charles de Foucauld (Brother Charles of Jesus)',
+    patronImage: '/uploads/patron-charles-de-foucauld.jpg',
     patronText:
       'Charles de Foucauld (1858 – 1916) was a French army officer and explorer who, after a profound conversion, became a priest and lived among the Tuareg people of the Sahara as a "universal brother". He died at Tamanrasset in 1916, was beatified in 2005 and canonised on 15 May 2022. His emblem, the Sacred Heart surmounted by a cross, appears on our school crest. Like him, we strive to make faith visible through simple, skilled and generous work.',
     accreditationText:

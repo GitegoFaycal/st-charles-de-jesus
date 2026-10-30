@@ -80,7 +80,7 @@ export const SECTIONS = {
       img('image', 'Side image'),
       area('mission', 'Mission'), area('vision', 'Vision'),
       list('values', 'Values', [text('title', 'Title'), area('text', 'Text')], 'Value'),
-      text('patronTitle', 'Patron section title'), area('patronText', 'Patron text'),
+      text('patronTitle', 'Patron section title'), img('patronImage', 'Patron photo (shown next to the patron text)'), area('patronText', 'Patron text'),
       area('accreditationText', 'Accreditation text'),
     ],
   },

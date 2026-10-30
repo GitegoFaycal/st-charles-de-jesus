@@ -49,7 +49,11 @@ export function About() {
       </section>
       <section className="bg-brand-800 py-16 text-white">
         <div className="container-x grid items-center gap-10 lg:grid-cols-[auto_1fr]">
-          <img src={mediaUrl(content.settings.logo) || '/images/logo.png'} alt="School crest" className="mx-auto h-48 w-auto rounded-2xl bg-white p-3" />
+          {a.patronImage ? (
+            <img src={mediaUrl(a.patronImage)} alt={a.patronTitle || 'Our patron'} className="mx-auto h-60 w-48 rounded-[5px] object-cover object-top shadow-card ring-4 ring-accent" />
+          ) : (
+            <img src={mediaUrl(content.settings.logo) || '/images/logo.png'} alt="School crest" className="mx-auto h-48 w-auto rounded-2xl bg-white p-3" />
+          )}
           <div>
             <h2 className="font-heading text-3xl font-bold text-white">{a.patronTitle}</h2>
             <p className="mt-4 leading-relaxed text-white/85">{a.patronText}</p>
