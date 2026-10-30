@@ -88,7 +88,7 @@ export function TestimonialCard({ t }) {
   return (
     <figure className="card relative flex h-full flex-col p-7">
       <Quote className="absolute right-6 top-6 text-quote" size={36} />
-      <blockquote className="flex-1 text-sm leading-relaxed text-ink-soft">“{t.quote}”</blockquote>
+      <blockquote className="flex-1 pr-10 text-sm leading-relaxed text-ink-soft">“{t.quote}”</blockquote>
       <figcaption className="mt-6 flex items-center gap-4">
         <Avatar src={t.photo} name={t.name} className="h-14 w-14" />
         <div>

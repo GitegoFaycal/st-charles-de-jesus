@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { X } from 'lucide-react'
 import Hero from '../components/Hero'
-import { QuickLinkCard, CurriculumCard, NewsCard } from '../components/Cards'
+import { QuickLinkCard, CurriculumCard, NewsCard, TestimonialCard } from '../components/Cards'
 import { Seo, Avatar } from '../components/ui'
 import { useContent } from '../context/ContentContext'
 import { mediaUrl } from '../lib/api'
@@ -52,6 +52,7 @@ export default function Home() {
   const l1 = programs.filter((p) => p.category !== 'TSS')
   const news = sortByDateDesc(content.news).slice(0, 3)
   const partners = home.partners || []
+  const testimonials = sortByOrder(content.testimonials).slice(0, 6)
   // The head teacher's name, title and photo come from the "Head teacher's message" page,
   // so they only need to be edited once.
   const ht = content.headTeacherMessage || {}
@@ -165,6 +166,22 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Student testimonials (managed in Admin > Testimonials) */}
+      {testimonials.length > 0 && (
+        <section className="bg-gray-50 py-16 md:py-20">
+          <div className="container-x">
+            <div className="mx-auto mb-10 max-w-3xl text-center">
+              <h2 className="font-heading text-[30px] font-bold text-[#212121] md:text-[41px]">{home.testimonialsHeading || 'What our students say'}</h2>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              {testimonials.map((t) => (
+                <TestimonialCard key={t.id} t={t} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Affiliations / partners */}
       {partners.length > 0 && (
